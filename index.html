@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<title>HTML Tutorial</title>
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> 
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
+</head>
+
+<body>
+
+
+<h1>This is a heading</h1>
+<p>This is a paragraph.</p>
+
+
+    Item:<br>
+    <input id= "item" type="text" name="Item">
+    <br>
+    Quantity:<br>
+    <input id = "quantity" type="text" name="Quantity">
+    <br>
+    Barcode:<br>
+    <input id = "barcode" type="text" name="Barcode">
+    <br><br>
+    <button id = "submit">Submit</button>
+    <br><br>
+    <br><br>
+    <button id = "summary">Summary Report</button>
+
+<div id = "summaryId">
+    <table id="tableid" class="display" width="100%">
+        <thead>
+       <tr>
+           <th>Item</th>
+           <th>Quantity</th>
+       </tr>
+   </thead></table>
+</table>
+
+
+</div>
+
+<script>
+    $("#submit").click(function(){
+        $.ajax({
+
+            url:"/stockItem" , 
+            type: "post" ,
+            data: { "item": $("#item").val() ,
+                    "quantity": $("#quantity").val() ,
+                    "barcode" : $("#barcode").val()
+        },
+            success: function(result){
+                alert(result);
+            }
+        });
+
+        $("#item").val("");
+        $("#quantity").val("");
+        $("#barcode").val("");
+    });
+
+
+    $("#summary").click(function(){
+
+        $.ajax({
+
+            url: "/stockSummary" ,
+            type: "get",
+            success: function(result){
+                var s = "<table><tr><th>Item</th><th>Quantity</th></tr>";
+                for(i = 0 ; i < result.length ; i++){
+                    s = s + "<tr><td>" + result[i].item + "</td><td>" + result[i].total + "</td></tr>" 
+
+                }
+                s = s + "</table>";
+                $("#tableid").DataTable({
+                    "data" : result,
+                    "columns" : [{"data" : "item"}, {"data" : "total"}]
+                });
+            }
+
+
+        });
+    });
+
+
+
+    
+    
+</script>
+
+
+
+</body>
+</html>
